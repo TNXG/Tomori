@@ -1,0 +1,33 @@
+---
+import '@/assets/styles/globals.css'
+
+import { apiClient } from '@/apiClient';
+import type { PostModel } from "@mx-space/api-client";
+
+import Homepage from '@/layouts/homepage';
+
+let articles: PostModel[] = [];
+
+async function fetchArticles() {
+  try {
+    const response = await apiClient.post.getList();
+    articles = response.data;
+  } catch (error) {
+    console.error("Failed to fetch articles:", error);
+  }
+}
+
+await fetchArticles();
+---
+
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天翔TNXGのAstro空间站</title>
+  </head>
+  <body>
+    <!-- 将获取到的文章数据作为属性传递给 HomePage 组件 -->
+    <Homepage client:only="react" articles={articles} />
+  </body>
+</html>
