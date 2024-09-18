@@ -5,7 +5,6 @@ import Head from "next/head";
 
 import Homepage from "@/layouts/homepage";
 
-
 export async function getStaticProps() {
   let articles: BlogItem[] = [];
 

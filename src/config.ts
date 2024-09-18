@@ -5,7 +5,7 @@ export const mxConfig = {
 export const SiteConfig = {
     ownerName: "天翔TNXG",
     SiteURL: "https://tnxgmoe.com",
-    title: "天翔TNXGのAstro空间站",
+    title: "天翔TNXGのNext空间站",
     description: "明日尚未到来，希望凝于心上",
     Language: 'zh-CN',
     avatar: 'https://api-space.tnxg.top/avatar?s=qq'

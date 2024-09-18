@@ -1,29 +1,29 @@
 "use client";
 
-import { useTheme } from "next-themes";
-import { flushSync } from "react-dom";
+import { motion } from "framer-motion";
 import { tv } from "tailwind-variants";
-
 import { useIsClient } from "@/lib/use-is-client";
-import { transitionViewIfSupported } from "@/lib/dom";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 
+const iconClassNames = "h-4 w-4 text-current";
+
+// 主题设置样式
 const styles = tv({
   base: "rounded-inherit inline-flex h-[32px] w-[32px] items-center justify-center border-0 text-current",
   variants: {
     status: {
-      active: "",
+      active: "bg-gray-200 dark:bg-gray-700 rounded-full",
+      inactive: "bg-transparent",
     },
   },
 });
-
-const iconClassNames = "h-4 w-4 text-current";
 
 const SunIcon = () => (
   <svg
     className={iconClassNames}
     fill="none"
     height="24"
-    shapeRendering="geometricPrecision"
     stroke="currentColor"
     strokeLinecap="round"
     strokeLinejoin="round"
@@ -48,7 +48,6 @@ const SystemIcon = () => (
     className={iconClassNames}
     fill="none"
     height="24"
-    shapeRendering="geometricPrecision"
     stroke="currentColor"
     strokeLinecap="round"
     strokeLinejoin="round"
@@ -66,7 +65,6 @@ const DarkIcon = () => (
   <svg
     fill="none"
     height="24"
-    shapeRendering="geometricPrecision"
     stroke="currentColor"
     strokeLinecap="round"
     strokeLinejoin="round"
@@ -79,75 +77,139 @@ const DarkIcon = () => (
   </svg>
 );
 
-export const ThemeSwitcher = () => (
-  <div className="relative inline-block">
-    <ThemeIndicator />
-    <ButtonGroup />
-  </div>
-);
+export const ThemeSwitcher = () => {
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-const ThemeIndicator = () => {
-  const { theme } = useTheme();
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    // 初始化时从 localStorage 中获取主题状态
+    if (!storedTheme || storedTheme === "system") {
+      setTheme("system");
+      updateSystemTheme();
+    }
+  }, [setTheme]);
+
+  const updateSystemTheme = () => {
+    const isDarkMode = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    document.documentElement.setAttribute(
+      "data-theme",
+      isDarkMode ? "dark" : "light"
+    );
+  };
+
+  // 监听系统配色变化
+  useEffect(() => {
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      if (theme === "system") {
+        document.documentElement.setAttribute(
+          "data-theme",
+          e.matches ? "dark" : "light"
+        );
+      }
+    };
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
+
+    return () =>
+      mediaQuery.removeEventListener("change", handleSystemThemeChange);
+  }, [theme]);
+
+  const handleThemeChange = (newTheme: "light" | "dark" | "system") => {
+    localStorage.setItem("theme", newTheme);
+    setTheme(newTheme);
+
+    if (newTheme === "system") {
+      updateSystemTheme();
+    } else {
+      setTheme(newTheme);
+    }
+  };
+
+  if (!mounted) return null;
+
+  return (
+    <div className="relative inline-block">
+      <ThemeIndicator theme={resolvedTheme ?? theme ?? "system"} />
+      <ButtonGroup theme={theme ?? "system"} setTheme={handleThemeChange} />
+    </div>
+  );
+};
+
+const ThemeIndicator = ({ theme }: { theme: string }) => {
   const isClient = useIsClient();
 
   if (!isClient) return null;
   if (!theme) return null;
+
   return (
-    <div
-      className="absolute top-[4px] z-[-1] size-[32px] rounded-full bg-base-100 shadow-[0_1px_2px_0_rgba(127.5,127.5,127.5,.2),_0_1px_3px_0_rgba(127.5,127.5,127.5,.1)] duration-200"
+    <motion.div
+      className="absolute top-[4px] z-[-1] size-[32px] rounded-full bg-base-100 shadow-[0_1px_2px_0_rgba(127.5,127.5,127.5,.2),_0_1px_3px_0_rgba(127.5,127.5,127.5,.1)]"
       style={{
         left: { light: 4, system: 36, dark: 68 }[theme],
       }}
+      animate={{
+        left: { light: 4, system: 36, dark: 68 }[theme],
+        opacity: 1,
+        scale: 1,
+      }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
     />
   );
 };
 
-const ButtonGroup = () => {
-  const { setTheme } = useTheme();
-
-  const buildThemeTransition = (theme: "light" | "dark" | "system") => {
-    console.log(`Switching to ${theme} theme`);
-    transitionViewIfSupported(() => {
-      flushSync(() => {
-        console.log(`Setting theme to ${theme}`);
-        setTheme(theme);
-      });
-    });
-  };
+const ButtonGroup = ({
+  theme,
+  setTheme,
+}: {
+  theme: string;
+  setTheme: (theme: "light" | "dark" | "system") => void;
+}) => {
+  const buttons = [
+    { theme: "light", icon: <SunIcon />, label: "Switch to light theme" },
+    { theme: "system", icon: <SystemIcon />, label: "Switch to system theme" },
+    { theme: "dark", icon: <DarkIcon />, label: "Switch to dark theme" },
+  ];
 
   return (
-    <div className="w-fit-content inline-flex rounded-full border border-zinc-200 p-[3px] dark:border-zinc-700">
-      <button
-        aria-label="Switch to light theme"
-        type="button"
-        className={styles.base}
-        onClick={() => {
-          buildThemeTransition("light");
-        }}
-      >
-        <SunIcon />
-      </button>
-      <button
-        aria-label="Switch to system theme"
-        className={styles.base}
-        type="button"
-        onClick={() => {
-          buildThemeTransition("system");
-        }}
-      >
-        <SystemIcon />
-      </button>
-      <button
-        aria-label="Switch to dark theme"
-        className={styles.base}
-        type="button"
-        onClick={() => {
-          buildThemeTransition("dark");
-        }}
-      >
-        <DarkIcon />
-      </button>
+    <div className="flex rounded-full border p-[3px] dark:border-zinc-700">
+      {buttons.map(({ theme: btnTheme, icon, label }) => (
+        <motion.button
+          key={btnTheme}
+          aria-label={label}
+          type="button"
+          className={`${styles.base} ${
+            theme === btnTheme
+              ? styles.variants.status.active
+              : styles.variants.status.inactive
+          }`}
+          onClick={() => setTheme(btnTheme as "light" | "dark" | "system")}
+          whileTap={{ scale: 0.95 }} // 点击时减少缩放幅度
+          whileHover={{ scale: 1.05 }} // 悬停时减少缩放幅度
+          transition={{
+            type: "spring",
+            stiffness: 300,
+            damping: 20,
+            duration: 0.3,
+          }} // 调整动画的过渡效果
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 5 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          >
+            {icon}
+          </motion.div>
+        </motion.button>
+      ))}
     </div>
   );
 };
