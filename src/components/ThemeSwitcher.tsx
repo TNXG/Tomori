@@ -8,7 +8,6 @@ import { useTheme } from "next-themes";
 
 const iconClassNames = "h-4 w-4 text-current";
 
-// 主题设置样式
 const styles = tv({
   base: "rounded-inherit inline-flex h-[32px] w-[32px] items-center justify-center border-0 text-current",
   variants: {
