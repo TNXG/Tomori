@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
-import { MiscellaneousConfig } from "@/config";
+import { calculateReadingTime } from "@/lib/utils";
 
 export default function ArticlesStreamPanel({
 	articles,
@@ -12,14 +12,6 @@ export default function ArticlesStreamPanel({
 }) {
 	const [searchQuery] = useState("");
 	const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-
-	const calculateReadingTime = (text: string) => {
-		const textLength = text.split(/\s+/).length;
-		const readingTime = Math.ceil(
-			textLength / MiscellaneousConfig.wordsPerMinute,
-		);
-		return `${readingTime} 分钟`;
-	};
 
 	const filteredArticles = articles.filter(
 		(article) =>

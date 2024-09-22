@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import { fetchAggregationData } from "@/config";
+import { ThemeProvider } from "next-themes";
 
 const AggregationData = await fetchAggregationData();
 
@@ -18,7 +19,15 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="zh-cn">
-			<body>{children}</body>
+			<head>
+				<link
+					rel="stylesheet"
+					href="https://cdn.tnxg.top/fonts/MiSansVF_Regular.css"
+				/>
+			</head>
+			<body>
+				<ThemeProvider>{children}</ThemeProvider>
+			</body>
 		</html>
 	);
 }

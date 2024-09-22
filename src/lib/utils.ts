@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { apiClient } from "@/apiClient";
 import type { PostModel, NoteModel, CategoryModel } from "@mx-space/api-client";
+import { MiscellaneousConfig } from "@/config";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -56,3 +57,11 @@ export async function postslist(): Promise<BlogItem[]> {
 		return new Date(b.created).getTime() - new Date(a.created).getTime();
 	});
 }
+
+export const calculateReadingTime = (text: string) => {
+	const textLength = text.split(/\s+/).length;
+	const readingTime = Math.ceil(
+		textLength / MiscellaneousConfig.wordsPerMinute,
+	);
+	return `${readingTime} 分钟`;
+};

@@ -1,5 +1,8 @@
-import type { CategoryModel } from "@mx-space/api-client";
-import type { AggregateRoot } from "@mx-space/api-client";
+import type {
+	CategoryModel,
+	AggregateRoot,
+	PostModel as ApiPostModel,
+} from "@mx-space/api-client";
 
 declare global {
 	export interface AppThemeConfig {
@@ -22,6 +25,7 @@ declare global {
 	export type AggregationData = AggregateRoot & {
 		theme: AppThemeConfig;
 	};
+	export type PostModel = ApiPostModel;
 }
 
 export {};

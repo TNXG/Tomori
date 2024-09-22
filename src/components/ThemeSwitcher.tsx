@@ -146,7 +146,6 @@ const ThemeIndicator = ({ theme }: { theme: string }) => {
 	const isClient = useIsClient();
 
 	if (!isClient) return null;
-	if (!theme) return null;
 
 	return (
 		<motion.div

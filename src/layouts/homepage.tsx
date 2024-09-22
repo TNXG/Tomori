@@ -1,12 +1,20 @@
 import { fetchAggregationData } from "@/config";
+import { postslist } from "@/lib/utils";
 
 import NavigationTop from "@/components/navigation/NavigationTop";
 import NavigationRight from "@/components/navigation/NavigationRight";
 import ArticlesStreamPanel from "@/components/ArticlesStreamPanel";
 import Footer from "@/components/Footer";
 
-const HomePage = async ({ articles }: { articles: BlogItem[] }) => {
-	const AggregationData = await fetchAggregationData();
+let articles: BlogItem[];
+let AggregationData: AggregationData;
+const HomePage = async () => {
+	try {
+		articles = await postslist();
+		AggregationData = await fetchAggregationData();
+	} catch (error) {
+		console.error("Failed to fetch articles:", error);
+	}
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-yellow-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
 			<NavigationTop AggregationData={AggregationData} />
