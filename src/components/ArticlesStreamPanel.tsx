@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import { calculateReadingTime } from "@/lib/utils";
@@ -39,9 +40,37 @@ export default function ArticlesStreamPanel({
 						boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
 					}}
 				>
-					<a href={article.url} className="block">
-						<div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden flex transition-all duration-300 ease-in-out hover:shadow-xl hover:bg-pink-50 dark:hover:bg-gray-700">
-							<div className="flex-1 p-6 pr-0">
+					<Link href={article.url} className="block">
+						<div className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col sm:flex-row transition-all duration-300 ease-in-out hover:shadow-xl hover:bg-pink-50 dark:hover:bg-gray-700">
+							{article.cover && (
+								<motion.div
+									className="relative w-full h-48 sm:w-80 sm:h-auto flex-shrink-0 order-first sm:order-last"
+									style={{
+										opacity: hoveredCard === article.id ? 1 : 0.8,
+									}}
+									animate={{
+										opacity: hoveredCard === article.id ? 1 : 0.8,
+									}}
+									transition={{ opacity: { duration: 0.3 } }}
+								>
+									<motion.img
+										src={article.cover}
+										alt={article.title}
+										className="absolute top-0 right-0 h-full m-0 object-cover hidden lg:block"
+										style={{
+											width: "min(320px, 50%)",
+											mask: "linear-gradient(to right, transparent, #fff 50%)",
+										}}
+									/>
+									<motion.img
+										src={article.cover}
+										alt={article.title}
+										className="h-full w-full object-cover lg:hidden sm:block bg-cover bg-no-repeat bg-center"
+										style={{ width: "100%", height: "100%" }}
+									/>
+								</motion.div>
+							)}
+							<div className="flex-1 p-6 sm:pr-0">
 								<div className="flex justify-between items-center">
 									<span className="text-sm font-semibold text-pink-600 dark:text-orange-500">
 										{article.category && article.category.name
@@ -87,28 +116,8 @@ export default function ArticlesStreamPanel({
 									)}
 								</div>
 							</div>
-							{article.cover && (
-								<motion.div
-									className="relative w-80 h-auto flex-shrink-0"
-									style={{ opacity: hoveredCard === article.id ? 1 : 0.8 }}
-									animate={{
-										opacity: hoveredCard === article.id ? 1 : 0.8,
-									}}
-									transition={{ opacity: { duration: 0.3 } }}
-								>
-									<motion.img
-										src={article.cover}
-										alt={article.title}
-										className="absolute top-0 right-0 h-full m-0 object-cover"
-										style={{
-											width: "min(320px, 50%)",
-											mask: "linear-gradient(to right, transparent, #fff 50%)",
-										}}
-									/>
-								</motion.div>
-							)}
 						</div>
-					</a>
+					</Link>
 				</motion.article>
 			))}
 		</motion.div>

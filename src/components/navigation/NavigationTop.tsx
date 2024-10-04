@@ -1,9 +1,21 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Icon } from "@iconify/react"; // 引入Search图标
+import { useState, useEffect } from "react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { NavLinksConfig } from "@/config";
+import {
+	Drawer,
+	DrawerClose,
+	DrawerContent,
+	DrawerDescription,
+	DrawerFooter,
+	DrawerHeader,
+	DrawerTitle,
+	DrawerTrigger,
+} from "@/components/ui/drawer";
+import Link from "next/link";
+import { getProtocolAndDomain } from "@/lib/dom-utils";
 
 interface NavigationTopProps {
 	AggregationData: AggregationData;
@@ -11,26 +23,27 @@ interface NavigationTopProps {
 
 const NavigationTop = ({ AggregationData }: NavigationTopProps) => {
 	const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-	const [isFloating, setIsFloating] = useState(false); // 监听滚动状态
-	const [isDarkMode, setIsDarkMode] = useState(false); // 监听暗色模式
+	const [isFloating, setIsFloating] = useState(false);
+	const [isDarkMode, setIsDarkMode] = useState(false);
+	const [drawerOpen, setDrawerOpen] = useState(false);
+	const [URL, setURL] = useState("");
 	const NavLinks = NavLinksConfig;
 
-	// 监听滚动事件
 	useEffect(() => {
+		setURL(getProtocolAndDomain());
 		const handleScroll = () => {
-			const distanceFromTop = window.scrollY; // 距离页面顶部的距离
-			const newIsFloating = distanceFromTop > 50; // 设置阈值为50px
+			const distanceFromTop = window.scrollY;
+			const newIsFloating = distanceFromTop > 50;
 			setIsFloating(newIsFloating);
 		};
 
 		window.addEventListener("scroll", handleScroll);
-		handleScroll(); // 初始化时检查位置
+		handleScroll();
 		return () => {
 			window.removeEventListener("scroll", handleScroll);
 		};
 	}, []);
 
-	// 监听暗色模式
 	useEffect(() => {
 		const handleDarkMode = () => {
 			setIsDarkMode(
@@ -51,9 +64,7 @@ const NavigationTop = ({ AggregationData }: NavigationTopProps) => {
 	return (
 		<header className="sticky top-0 z-50 font-satoshi">
 			<div
-				className={`transition-all border-b border-transparent dark:bg-gray-800 ${
-					isFloating ? "dark:bg-gray-900 dark:shadow-lg" : ""
-				}`}
+				className={`transition-all border-b border-transparent dark:bg-gray-800 ${isFloating ? "dark:bg-gray-900 dark:shadow-lg" : ""}`}
 				style={{
 					width: isFloating ? "88%" : "100%",
 					position: isFloating ? "fixed" : "relative",
@@ -70,15 +81,11 @@ const NavigationTop = ({ AggregationData }: NavigationTopProps) => {
 				}}
 			>
 				<div className="container mx-auto px-4 py-4 flex justify-between items-center">
-					{/* 左侧 logo 部分 */}
 					<div className="flex items-center space-x-2">
-						<div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 dark:from-orange-500 dark:to-yellow-500 rounded-full" />
 						<span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 dark:from-orange-500 dark:to-yellow-500">
-							{AggregationData.seo.title}
+							<Link href={URL}>{AggregationData.seo.title}</Link>
 						</span>
 					</div>
-
-					{/* 中间空出来的部分 */}
 					<div className="flex-grow" />
 
 					{/* 右侧导航栏链接和搜索按钮 */}
@@ -91,7 +98,7 @@ const NavigationTop = ({ AggregationData }: NavigationTopProps) => {
 									onMouseEnter={() => setActiveDropdown(item.name)}
 									onMouseLeave={() => setActiveDropdown(null)}
 								>
-									<a
+									<Link
 										href={item.href}
 										className="text-gray-700 dark:text-gray-300 font-medium px-4 py-2 rounded-lg transition-all duration-150 ease-in-out hover:bg-purple-100 dark:hover:bg-gray-600"
 									>
@@ -102,14 +109,14 @@ const NavigationTop = ({ AggregationData }: NavigationTopProps) => {
 												className="inline-block ml-1 w-4 h-4 dark:text-yellow-500"
 											/>
 										)}
-									</a>
+									</Link>
 									{item.dropdownItems && activeDropdown === item.name && (
 										<div
 											className="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-20"
 											style={{ padding: "0.25rem" }}
 										>
 											{item.dropdownItems.map((dropdownItem) => (
-												<a
+												<Link
 													key={dropdownItem}
 													href="#"
 													className="flex items-center justify-center text-base text-gray-700 dark:text-gray-300 transition-all duration-150 ease-in-out hover:bg-purple-100 dark:hover:bg-gray-600 rounded-md"
@@ -119,21 +126,51 @@ const NavigationTop = ({ AggregationData }: NavigationTopProps) => {
 													}}
 												>
 													{dropdownItem}
-												</a>
+												</Link>
 											))}
 										</div>
 									)}
 								</div>
 							))}
 						</nav>
-						{/* 小的搜索按钮 */}
-						<Button variant="ghost" className="hover:bg-purple-100" size="icon">
-							<Icon
-								icon="mingcute:search-2-line"
-								className="w-5 h-5 text-gray-700 dark:text-yellow-500"
-							/>
-						</Button>
 					</div>
+					{/* 小屏幕按钮 */}
+					<Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+						<DrawerTrigger asChild>
+							<Button
+								variant="ghost"
+								className="hover:bg-purple-100 md:hidden"
+								size="icon"
+							>
+								<Icon
+									icon="mingcute:menu-fill"
+									className="w-5 h-5 text-gray-700 dark:text-yellow-500"
+								/>
+							</Button>
+						</DrawerTrigger>
+						<DrawerContent>
+							<DrawerHeader>
+								<DrawerTitle>{AggregationData.seo.title}</DrawerTitle>
+								<DrawerDescription>选择导航链接</DrawerDescription>
+							</DrawerHeader>
+							<div className="flex flex-col space-y-2">
+								{NavLinks.map((item) => (
+									<Link
+										key={item.name}
+										href={item.href}
+										className="text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-purple-100 dark:hover:bg-gray-600"
+									>
+										{item.name}
+									</Link>
+								))}
+							</div>
+							<DrawerFooter>
+								<DrawerClose>
+									<Button variant="outline">关闭</Button>
+								</DrawerClose>
+							</DrawerFooter>
+						</DrawerContent>
+					</Drawer>
 				</div>
 			</div>
 		</header>

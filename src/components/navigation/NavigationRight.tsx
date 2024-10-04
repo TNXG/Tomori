@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Icon } from "@iconify/react";
+import Link from "next/link";
 
 import { SocialLinkConfig } from "@/config";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
@@ -22,7 +23,7 @@ const NavigationRight = ({ AggregationData }: NavigationRightProps) => {
 				className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-6"
 			>
 				<div className="text-center relative">
-					<a href="/about" className="block relative group">
+					<Link href="/about" className="block relative group">
 						<Avatar className="w-32 h-32 mx-auto mb-4 relative">
 							<AvatarImage
 								src={AggregationData.user.avatar}
@@ -41,7 +42,7 @@ const NavigationRight = ({ AggregationData }: NavigationRightProps) => {
 								/>
 							</motion.div>
 						</Avatar>
-					</a>
+					</Link>
 					<h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 dark:from-orange-500 dark:to-yellow-500">
 						{AggregationData.user.name}
 					</h1>
@@ -58,13 +59,13 @@ const NavigationRight = ({ AggregationData }: NavigationRightProps) => {
 							transition={{ duration: 0.3 }}
 						>
 							<Button variant="ghost" size="icon" asChild>
-								<a href={link.link} target="_blank" rel="noopener noreferrer">
+								<Link href={link.link} target="_blank" rel="noopener noreferrer">
 									<Icon
 										icon={link.icon}
 										className="h-5 w-5 text-gray-800 dark:text-orange-500"
 									/>
 									<span className="sr-only">{link.name}</span>
-								</a>
+								</Link>
 							</Button>
 						</motion.div>
 					))}

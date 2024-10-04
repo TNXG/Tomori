@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { tv } from "tailwind-variants";
-import { useIsClient } from "@/lib/use-is-client";
+import { useIsClient } from "@/lib/dom-utils";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 

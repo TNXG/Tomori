@@ -1,9 +1,9 @@
-"use client"; // 确保这是一个客户端组件
+"use client";
 
 import dayjs from "dayjs";
 import { calculateReadingTime } from "@/lib/utils";
 import { Icon } from "@iconify/react";
-import { Fragment, useState } from "react";
+import React, { Fragment, useState } from "react";
 import {
 	Tooltip,
 	TooltipContent,
@@ -51,7 +51,7 @@ export const ArticlesMeta = ({ post }: { post: PostModel }) => {
 		<>
 			<h1 className="text-4xl font-extrabold mb-4 text-center">{post.title}</h1>
 			<div className="text-sm text-muted-foreground mb-2 text-center">
-				<div className="flex items-center justify-center space-x-2">
+				<div className="flex flex-wrap items-center justify-center space-x-2">
 					{!!post.created && (
 						<>
 							<Icon icon="mdi:calendar-outline" className="h-4 w-4" />
@@ -95,14 +95,14 @@ export const ArticlesMeta = ({ post }: { post: PostModel }) => {
 								</MotionButtonBase>
 
 								<motion.div
-									className="absolute left-0 bottom-0 h-[2px] bg-green-300" // 修改为浅草绿色
+									className="absolute left-0 bottom-0 h-[2px] bg-green-300"
 									style={{
 										width: underlineWidth,
 										transform: `translateX(${underlineLeft}px)`,
 									}}
 									initial={{ width: 0 }}
 									animate={{ width: isHovering ? underlineWidth : 0 }}
-									transition={{ duration: 0.5, ease: "easeInOut" }} // 平滑显示和隐藏
+									transition={{ duration: 0.5, ease: "easeInOut" }}
 								/>
 
 								{post.tags?.length ? (
@@ -132,7 +132,7 @@ export const ArticlesMeta = ({ post }: { post: PostModel }) => {
 														animate={{
 															width: isTagHovering ? tagUnderlineWidth : 0,
 														}}
-														transition={{ duration: 0.5, ease: "easeInOut" }} // 设置为更慢的速度
+														transition={{ duration: 0.5, ease: "easeInOut" }}
 													/>
 												</Fragment>
 											);

@@ -136,9 +136,21 @@ const twConfig: Config = {
 						},
 					},
 				},
+				dark: {
+					css: {
+						color: "#e0e0e0",
+						a: {
+							color: "#60a5fa",
+							"&:hover": {
+								color: "#93c5fd",
+							},
+						},
+					},
+				},
 			},
 		},
 	},
 	plugins: [tailwindcssAnimate, daisyui, typography({ target: "modern" })],
 };
+
 export default twConfig;
