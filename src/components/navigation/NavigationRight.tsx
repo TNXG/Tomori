@@ -23,7 +23,7 @@ const NavigationRight = ({ AggregationData }: NavigationRightProps) => {
 				className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-6"
 			>
 				<div className="text-center relative">
-					<Link href="/about" className="block relative group">
+					<Link href="/about-me" className="block relative group">
 						<Avatar className="w-32 h-32 mx-auto mb-4 relative">
 							<AvatarImage
 								src={AggregationData.user.avatar}
@@ -59,7 +59,11 @@ const NavigationRight = ({ AggregationData }: NavigationRightProps) => {
 							transition={{ duration: 0.3 }}
 						>
 							<Button variant="ghost" size="icon" asChild>
-								<Link href={link.link} target="_blank" rel="noopener noreferrer">
+								<Link
+									href={link.link}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
 									<Icon
 										icon={link.icon}
 										className="h-5 w-5 text-gray-800 dark:text-orange-500"

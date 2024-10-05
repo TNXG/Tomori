@@ -148,7 +148,7 @@ const NavigationTop = ({ AggregationData }: NavigationTopProps) => {
 								/>
 							</Button>
 						</DrawerTrigger>
-						<DrawerContent>
+						<DrawerContent className="flex flex-col justify-center items-center">
 							<DrawerHeader>
 								<DrawerTitle>{AggregationData.seo.title}</DrawerTitle>
 								<DrawerDescription>选择导航链接</DrawerDescription>

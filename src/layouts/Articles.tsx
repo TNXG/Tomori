@@ -1,29 +1,73 @@
 "use client";
 
+import React, { useEffect, useCallback } from "react";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import NavigationTop from "@/components/navigation/NavigationTop";
 import NavigationRight from "@/components/navigation/NavigationRight";
-import MarkdownRender from "@/components/render/markdown";
 import Footer from "@/components/Footer";
 import ArticlesMeta from "@/components/articles/ArticlesMeta";
 import ArticlesFooter from "@/components/articles/ArticlesFooter";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 interface Params {
 	AggregationData: AggregationData;
 	PostData: PostModel;
+	Content: string;
 }
 
-const ArticlesPage = ({ AggregationData, PostData }: Params) => {
-	const router = useRouter(); // 直接调用 useRouter
+const ArticlesPage = ({ AggregationData, PostData, Content }: Params) => {
+	const router = useRouter();
+	const { toast } = useToast();
 
 	const handleBackClick = () => {
 		router.back();
 	};
 
 	const purePost = JSON.parse(JSON.stringify(PostData));
+
+	const clickCopy = useCallback(
+		(content: string): void => {
+			navigator.clipboard
+				.writeText(content)
+				.then(() => {
+					toast({
+						title: "复制成功",
+						description:
+							"已将内容复制到剪贴板，请尊重作者劳动成果，转载请遵守授权协议",
+					});
+				})
+				.catch((err) => {
+					console.error("复制失败:", err);
+					toast({
+						title: "复制失败",
+						description: "无法复制内容到剪贴板，请重试",
+						variant: "destructive",
+					});
+				});
+		},
+		[toast],
+	);
+
+	useEffect(() => {
+		const handleClick = (event: MouseEvent) => {
+			const button = event.target as HTMLButtonElement;
+			if (button.hasAttribute("data-code-content")) {
+				const codeContent = button.getAttribute("data-code-content");
+				if (codeContent) {
+					clickCopy(codeContent);
+				}
+			}
+		};
+
+		document.addEventListener("click", handleClick);
+
+		return () => {
+			document.removeEventListener("click", handleClick);
+		};
+	}, [clickCopy]);
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-yellow-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
@@ -60,7 +104,10 @@ const ArticlesPage = ({ AggregationData, PostData }: Params) => {
 								</Card>
 							)}
 
-							<MarkdownRender content={PostData.text} />
+							<div
+								id="Article_main"
+								dangerouslySetInnerHTML={{ __html: Content }}
+							></div>
 							<div className="divider mb-4"></div>
 							<ArticlesFooter
 								post={purePost}

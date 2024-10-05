@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap");
+@import url("https://cdn.tnxg.top/fonts/MiSansVF_Regular.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,6 +17,10 @@
   src: url("/fonts/Satoshi-VariableItalic.ttf");
   font-style: italic;
   font-display: swap;
+}
+
+body {
+  zoom: 1.1; /* 将页面放大到 110% */
 }
 
 @layer base {

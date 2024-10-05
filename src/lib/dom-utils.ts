@@ -1,6 +1,7 @@
 "use client";
 
 import { startTransition, useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export const useIsClient = () => {
 	const [isClient, setIsClient] = useState(false);

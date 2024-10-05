@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import { Icon } from "@iconify/react";
 import { QRCodeSVG } from "qrcode.react";
 import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
 
 export const ArticlesFooter = ({
 	post,
@@ -19,6 +20,8 @@ export const ArticlesFooter = ({
 	const [link, setLink] = useState<string | null>(null);
 	const qrcodeContainerRef = useRef<HTMLDivElement | null>(null);
 
+	const { toast } = useToast();
+
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			setLink(getCurrentURL());
@@ -27,7 +30,23 @@ export const ArticlesFooter = ({
 
 	const handleCopyLink = () => {
 		if (link) {
-			navigator.clipboard.writeText(link);
+			navigator.clipboard
+				.writeText(link)
+				.then(() => {
+					toast({
+						title: "复制成功",
+						description:
+							"已将内容复制到剪贴板，请尊重作者劳动成果，转载请遵守授权协议",
+					});
+				})
+				.catch((err) => {
+					console.error("复制失败:", err);
+					toast({
+						title: "复制失败",
+						description: "无法复制内容到剪贴板，请重试",
+						variant: "destructive",
+					});
+				});
 		}
 	};
 
@@ -61,7 +80,7 @@ export const ArticlesFooter = ({
 				{/* 标题和链接 */}
 				<div className="flex flex-col">
 					<div className="text-foreground">{post.title}</div>
-					<div className="text-sm">{link}</div>
+					<div className="text-sm break-all">{link}</div>
 				</div>
 
 				{/* 文章信息 */}

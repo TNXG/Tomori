@@ -17,7 +17,7 @@ const twConfig: Config = {
 				satoshi: "Satoshi",
 				sans: "MiSans_VF",
 				serif: "Noto Serif CJK SC",
-				mono: "JetBrainsMono",
+				mono: "JetBrains Mono",
 			},
 			borderRadius: {
 				lg: "var(--radius)",

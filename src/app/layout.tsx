@@ -3,11 +3,15 @@ import "./globals.css";
 
 import { fetchAggregationData } from "@/config";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "@/components/ui/toaster";
 
 const AggregationData = await fetchAggregationData();
 
 export const metadata: Metadata = {
-	title: AggregationData.seo.title,
+	title: {
+		template: `%s - ${AggregationData.seo.title}`,
+		default: AggregationData.seo.title,
+	},
 	description: AggregationData.seo.description,
 	keywords: AggregationData.seo.keywords,
 };
@@ -19,14 +23,11 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="zh-cn">
-			<head>
-				<link
-					rel="stylesheet"
-					href="https://cdn.tnxg.top/fonts/MiSansVF_Regular.css"
-				/>
-			</head>
-			<body>
-				<ThemeProvider>{children}</ThemeProvider>
+			<body className="font-sans zoom-in-110">
+				<ThemeProvider>
+					<main>{children}</main>
+					<Toaster />
+				</ThemeProvider>
 			</body>
 		</html>
 	);
